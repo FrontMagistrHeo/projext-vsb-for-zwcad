@@ -1,0 +1,47 @@
+Sub CountUniqueElementNamesInDWG()
+    ' Path to the DWG file
+    Dim filePath As String
+    filePath = "C:\Users\georg\Desktop\BMFD-3-new_modef01.dwg" ' Specify the path to the DWG file
+
+    ' Open the DWG file
+    Dim doc As Object
+    On Error GoTo ErrHandler
+    Set doc = ZWCAD.Documents.Open(filePath)
+    On Error GoTo 0
+
+    ' Initialize collection for counting element names
+    Dim elementNames As Object
+    Set elementNames = CreateObject("Scripting.Dictionary") ' Using a Dictionary to count unique names
+
+    ' Count unique element names in ModelSpace
+    Dim obj As Object
+
+    For Each obj In doc.ModelSpace
+        Dim name As String
+        name = TypeName(obj) ' Get the type name of the entity
+
+        ' If the name already exists in the dictionary, increment its count
+        If elementNames.Exists(name) Then
+            elementNames(name) = elementNames(name) + 1
+        Else
+            elementNames.Add name, 1 ' Add new element name with count 1
+        End If
+    Next obj
+
+    ' Display the counts of unique element names
+    Dim key As Variant
+    Dim result As String
+    result = "Unique Element Names and their Counts:" & vbCrLf & vbCrLf
+
+    For Each key In elementNames.Keys
+        result = result & key & ": " & elementNames(key) & vbCrLf
+    Next key
+
+    MsgBox result
+    doc.Close False
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error opening DWG file: " & Err.Description
+    If Not doc Is Nothing Then doc.Close False
+End Sub
