@@ -1,0 +1,23 @@
+Sub CountBlocksInDWG()
+    Dim doc As Object
+    Dim blockCount As Integer
+    blockCount = 0
+
+    ' Open the DWG file
+    Set doc = ZWCAD.Documents.Open("C:\Users\georg\Desktop\BMFD-3-new_modef01.dwg")
+
+    ' Iterate through all objects in the drawing
+    Dim obj As Object
+    For Each obj In doc.ModelSpace
+        If obj.ObjectName = "AcDbBlockReference" Then
+            ' It's a block, increment the count
+            blockCount = blockCount + 1
+        End If
+    Next obj
+
+    ' Display the result
+    MsgBox "Number of blocks in the DWG file: " & blockCount
+
+    ' Close the DWG file
+    doc.Close False
+End Sub
